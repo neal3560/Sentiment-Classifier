@@ -1,10 +1,18 @@
 import numpy as np
 import string
+import random
 import math
 import re
 from collections import defaultdict
 from scipy.sparse import csr_matrix
 from sklearn.linear_model import LogisticRegression
+
+def read(dataFile):
+    train_data = []
+    file = open(dataFile, encoding='utf8')
+    for l in file:
+        train_data.append(l)
+    return train_data
 
 def read_tsv(tar, fname):
     member = tar.getmember(fname)
@@ -84,7 +92,7 @@ def train_classifier(X, y, c):
     cls.fit(X, y)
     return cls
 
-def tokenize(dataset):
+def tokenize(dataset, mode):
     termsCount = defaultdict(int)
     documentCount = defaultdict(int)
 
@@ -97,7 +105,7 @@ def tokenize(dataset):
             voc.add(w)
             termsCount[w] += 1
 
-            if i != len(r) - 1:
+            if i != len(r) - 1 and mode == 0:
                 b = r[i] + ' ' + r[i + 1]
                 voc.add(b)
                 termsCount[b] += 1
@@ -113,7 +121,7 @@ def tokenize(dataset):
         idf[t] = math.log(len(dataset) / (documentCount[t]))
     return (termsId, idf)
 
-def tf(document):
+def tf(document, mode):
     tf_table = defaultdict(int)
     lower = ''.join([c for c in document.lower()])
     r = re.split(r'\W+', lower)
@@ -121,7 +129,7 @@ def tf(document):
         w = r[i]
         tf_table[w] += 1
 
-        if i != len(r) - 1:
+        if i != len(r) - 1 and mode == 0:
             b = r[i] + ' ' + r[i + 1]
             tf_table[b] += 1
 
@@ -129,13 +137,13 @@ def tf(document):
         tf_table[t] = math.log(1 + tf_table[t])
     return tf_table
 
-def tfidf_matrix(dataset, termsId, idf):
+def tfidf_matrix(dataset, termsId, idf, mode):
     row = []
     col = []
     data = []
     index = 0
     for document in dataset:
-        tf_table = tf(document)
+        tf_table = tf(document, mode)
         for t in tf_table:
             if t in termsId:
                 row.append(index)
@@ -146,19 +154,21 @@ def tfidf_matrix(dataset, termsId, idf):
 
 class TC:
     def __init__(self, mode=0):
+        self.mode = mode
         if mode == 0:
             tarfname = "./text_classifier/data/sentiment.tar.gz"
             sentiment = read_files(tarfname)
             train_data = sentiment.train_data
             train_y = sentiment.trainy
         else:
-            pass
-        self.wordsId, self.idf_table = tokenize(sentiment.train_data)
-        trainX = tfidf_matrix(sentiment.train_data, self.wordsId, self.idf_table)
-        self.cls = train_classifier(trainX, sentiment.trainy, 0.1)
+            train_data = read("./text_classifier/data/datafile.txt")
+            train_y = [int(label) for label in read("./text_classifier/data/label.txt")]
+        self.wordsId, self.idf_table = tokenize(train_data, mode)
+        trainX = tfidf_matrix(train_data, self.wordsId, self.idf_table, mode)
+        self.cls = train_classifier(trainX, train_y, 0.1)
 
     def classify(self, review):
-        test_vector = tfidf_matrix([review], self.wordsId, self.idf_table)[0]
+        test_vector = tfidf_matrix([review], self.wordsId, self.idf_table, self.mode)[0]
         lower = ''.join([c for c in review.lower()])
         r = re.split(r'\W+', lower)
         uni = []
@@ -166,7 +176,7 @@ class TC:
         for i in range(len(r)):
             w = r[i]
             uni.append(w)
-            if i != len(r) - 1:
+            if i != len(r) - 1 and self.mode == 0:
                 b = r[i] + ' ' + r[i + 1]
                 bi.append(b)
         """
@@ -184,4 +194,6 @@ class TC:
                 print(w, "is unseen")
         print("confidence score:", self.cls.decision_function(test_vector)[0])
         """
-        return self.cls.decision_function(test_vector)[0]
+        label = self.cls.predict(test_vector)[0]
+        confidence = round(self.cls.predict_proba(test_vector)[0].max(), 2)
+        return (label, confidence)
