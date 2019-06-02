@@ -1,0 +1,54 @@
+/*
+ * Chunan Huang
+ */ 
+
+
+/* ----------------- Jumbotron ------------------- */
+.jumbotron {
+	display: flex;
+	align-items: center;
+	background-size: cover;
+	color: #ffffff;
+	height: 725px;
+	
+}
+.main{
+	background-image:url("./light.gif");
+}
+.part1{
+	background-image:url("./back.gif");
+}
+
+.text-center h1 {
+	font-size: 120px;
+	font-weight: 700;
+	margin: 0;
+	color: #fff;
+	font-family: 'Roboto', sans-serif;
+}
+.text-center h3 {
+	color: #eee;
+	font-family: cursive; ;
+	font-family: Times, "Times New Roman", serif;
+}
+ /* ------ option ------- */
+#option .row{
+	display: flew;
+	align-items: center;
+	margin-top: 130px;
+}
+#option a{
+	font-size: 40px;
+	font-family: cursive;
+	background: linear-gradient(to right, #f78645 0%, hsl(155, 72%, 56%) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+/*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+
+
+
+
+
+

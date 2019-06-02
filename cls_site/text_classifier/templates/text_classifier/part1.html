@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Classifier</title>
+		<meta charset="UTF-8"/>
+		<!--credit to bootstrap -->
+		<!--href= "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"-->
+		{% load static %}
+		<link rel="stylesheet" href="{% static "text_classifier/bootstrap.css" %}" type='text/css'>
+		<!-- credit to google apis:--> 
+		<!--https://fonts.googleapis.com/css?family=Roboto:300,400,700-->
+		<link href="{% static "text_classifier/googleapis.css" %}"  rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="{% static "text_classifier/main.css" %}"  >
+	</head>
+
+	<body >
+
+		
+		<!-- Jumbotron -->
+		<section class="jumbotron part1" >
+			<div class="container">
+				<div class="text-center">
+					<h1>Input Here:</h1>
+                    <br>
+                    <form action="/text_classifier/" method="post">
+                        {% csrf_token %}
+                         {{ form }}
+                        <input type="submit" value="Submit">
+                    </form>
+					
+				</div>
+		
+			</div>
+		</section>
+		
+	</body>
+</html>
+

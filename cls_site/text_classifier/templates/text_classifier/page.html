@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Classifier</title>
+		<meta charset="UTF-8"/>
+		<!--credit to bootstrap -->
+		<!--href= "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"-->
+		{% load static %}
+		<link rel="stylesheet" href="{% static "text_classifier/bootstrap.css" %}" type='text/css'>
+		<!-- credit to google apis:--> 
+		<!--https://fonts.googleapis.com/css?family=Roboto:300,400,700-->
+		<link href="{% static "text_classifier/googleapis.css" %}"  rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="{% static "text_classifier/main.css" %}"  >
+	</head>
+
+	<body >
+
+		
+		<!-- Jumbotron -->
+		<section class="jumbotron main" >
+			<div class="container">
+				<div class="text-center">
+					<h1>Text Classifier</h1>
+					<br>
+					<h3> By: Wenxuan Huang, Chunan Huang</h3>
+				</div>
+			
+				<div id="option">
+						<div class="row">
+						  <div class="col-sm-6 text-center">
+								<a href="{% url 'part1'  %}">PART ONE</a>
+						  </div>
+						  <div class="col-sm-6 text-center">
+							<a href="{% url 'part2'  %}">PART TWO</a>
+						  </div>
+						</div>
+				</div>
+			</div>
+		</section>
+		
+	</body>
+</html>
+
