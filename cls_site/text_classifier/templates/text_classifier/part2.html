@@ -15,23 +15,19 @@
 		<link rel="stylesheet" type="text/css" href="{% static "text_classifier/main.css" %}"  >
 	</head>
 
-	<body class="part1">
-
-
+	<body class="part2" >
 		<!-- Jumbotron -->
 		<section class="jumbotron" >
 			<div class="container">
 				<div class="text-center">
-					<h1>Sentiment Classifier</h1>
-                    <br>
-                    <form action="/text_classifier/part1" method="post">
-                        {% csrf_token %}
-                         {{ form }}
-                        <input type="submit" value="Submit">
-                    </form>
-
+					<h1>Toxicity Classifier</h1>
+              <br>
+                <form action="/text_classifier/part2" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type="submit" value="Submit">
+                </form>
 				</div>
-
 			</div>
 		</section>
 

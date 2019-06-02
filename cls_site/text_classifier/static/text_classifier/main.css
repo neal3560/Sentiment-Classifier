@@ -1,6 +1,6 @@
 /*
  * Chunan Huang
- */ 
+ */
 
 
 /* ----------------- Jumbotron ------------------- */
@@ -8,47 +8,84 @@
 	display: flex;
 	align-items: center;
 	background-size: cover;
-	color: #ffffff;
+	background-color: rgba(0, 0, 0, 0);
 	height: 725px;
-	
+
 }
 .main{
-	background-image:url("./light.gif");
+	background-image:url("./forest.gif");
+	height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 .part1{
 	background-image:url("./back.gif");
+	height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.part2{
+	background-image:url("./cat.gif");
+	height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .text-center h1 {
-	font-size: 120px;
-	font-weight: 700;
+	font-size: 80px;
+	font-weight: 500;
 	margin: 0;
 	color: #fff;
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Arial', sans-serif;
 }
 .text-center h3 {
 	color: #eee;
-	font-family: cursive; ;
-	font-family: Times, "Times New Roman", serif;
+	font-size:20px;
+	font-style: italic;
+	font-family: 'Arial', sans-serif;
 }
+
+label{
+	color: #fff;
+}
+
+input[type=text]{
+  width: 300px;
+	height:30px;
+  padding: 8px;
+	margin: 8px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+input[type=submit] {
+	height:32px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
  /* ------ option ------- */
 #option .row{
 	display: flew;
 	align-items: center;
-	margin-top: 130px;
+	margin-top: 80px;
 }
 #option a{
 	font-size: 40px;
 	font-family: cursive;
-	background: linear-gradient(to right, #f78645 0%, hsl(155, 72%, 56%) 100%);
+	background: white;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-
-
-
-
-
-
