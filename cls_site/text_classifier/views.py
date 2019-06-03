@@ -7,7 +7,7 @@ from .cls import TC
 
 class SentenceForm(forms.Form):
     input = 'Input Sentence'
-    test_sentence = forms.CharField(label='', max_length=100,widget=forms.TextInput(attrs={'placeholder': input,}))
+    test_sentence = forms.CharField(label='', max_length=300,widget=forms.TextInput(attrs={'placeholder': input,}))
 
 tc_sentiment = TC(0)
 tc_toxic = TC(1)

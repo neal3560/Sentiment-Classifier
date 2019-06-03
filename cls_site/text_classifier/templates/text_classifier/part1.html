@@ -19,6 +19,7 @@
 				document.getElementById("example").textContent = dict[word]
 			}
 		</script>
+
 	</head>
 
 	<body class="part1" >
@@ -55,17 +56,19 @@
 
 				<h2 style="color:#fff; font-size:16px;">Processed test sentence:&#160</h2>
 
-
-				<div class="horizontal">
-					<h2 style="color:#fff; font-size:16px;">&#160</h2>
-					{% for word in info.sentence %}
-						{% if word in info.important_uni %}
-							<mark class="important_uni" onclick='giveExample("{{word}}", {{info.example}})'>{{word}}</mark>
-						{% else %}
-							<mark class="normal">{{word}}</mark>
-						{% endif %}
+				<div id="process">
+					<br>
+					{% for section in info.sentence %}
+						{% for word in section %}
+							{% if word in info.important_uni %}
+								<mark class="important_uni" onclick='giveExample("{{word}}", {{info.example}})'>{{word}}</mark>
+							{% else %}
+								<mark class="normal">{{word}}</mark>
+							{% endif %}
+						{% endfor%}
 					{% endfor %}
 				</div>
+				<br><br>
 
 				<p class="color" style="font-size:16px;">Word Example:</p>
 				<div class="horizontal">
@@ -83,7 +86,7 @@
 
 		<div class="vertical" style="margin-top:16px">
 			<div class="horizontal">
-				<img class="chart" src="{% static "text_classifier/tfidf_uni.png" %}">
+				<img id="myImg" class="chart" src="{% static "text_classifier/tfidf_uni.png" %}">
 				<img class="chart" src="{% static "text_classifier/sentiment_uni.png" %}">
 				<img class="chart" src="{% static "text_classifier/weight_uni.png" %}">
 			</div>
@@ -94,6 +97,42 @@
 				<img class="chart" src="{% static "text_classifier/weight_bi.png" %}">
 			</div>
 		</div>
+
+		<!-- The Modal -->
+		<div id="myModal" class="modal">
+			<!-- The Close Button -->
+			<span class="close">&times;</span>
+		
+			<!-- Modal Content (The Image) -->
+			<img class="modal-content" id="img01">
+		
+			<!-- Modal Caption (Image Text) -->
+			<div id="caption"></div>
+		</div>
+
+		<script>
+			// Get the modal
+			var modal = document.getElementById("myModal");
+
+			// Get the image and insert it inside the modal - use its "alt" text as a caption
+			var img = document.getElementById("myImg");
+			var modalImg = document.getElementById("img01");
+			var captionText = document.getElementById("caption");
+			img.onclick = function(){
+			modal.style.display = "block";
+			modalImg.src = this.src;
+			captionText.innerHTML = this.alt;
+			}
+
+			// Get the <span> element that closes the modal
+			var span = document.getElementsByClassName("close")[0];
+
+			// When the user clicks on <span> (x), close the modal
+			span.onclick = function() { 
+			modal.style.display = "none";
+			}
+		</script>
+		  
 	</div>
 		{% endif %}
 	</body>

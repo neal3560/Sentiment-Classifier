@@ -192,7 +192,22 @@ class TC:
         class Data: pass
         information = Data()
         information.origin = review
-        information.sentence = r
+        # split sentence into sections
+        sen = []
+        section = []
+        curLen = 0
+        for index in range(len(r)):
+            word = r[index]
+            section.append(word)
+            curLen += len(word)
+            if curLen > 20:
+                sen.append(section)
+                section = []
+                curLen = 0
+        if len(section) != 0:
+            sen.append(section)
+        # set up info
+        information.sentence = sen
         information.label = self.cls.predict(test_vector)[0]
         information.confidence = "{:.2%}".format(prob)
 
