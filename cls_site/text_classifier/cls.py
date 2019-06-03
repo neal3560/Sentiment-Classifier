@@ -184,6 +184,7 @@ class TC:
 
         class Data: pass
         information = Data()
+        information.sentence = ''.join([w for w in r])
         information.label = self.cls.predict(test_vector)[0]
         information.confidence = "{:.2%}".format(self.cls.predict_proba(test_vector)[0].max())
 
