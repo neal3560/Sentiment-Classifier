@@ -3,6 +3,7 @@ import string
 import random
 import math
 import re
+import matplotlib.pyplot as plt
 from collections import defaultdict
 from scipy.sparse import csr_matrix
 from sklearn.linear_model import LogisticRegression
@@ -158,14 +159,14 @@ class TC:
         if mode == 0:
             tarfname = "./text_classifier/data/sentiment.tar.gz"
             sentiment = read_files(tarfname)
-            train_data = sentiment.train_data
-            train_y = sentiment.trainy
+            self.train_data = sentiment.train_data
+            self.train_y = sentiment.trainy
         else:
-            train_data = read("./text_classifier/data/datafile.txt")
-            train_y = [int(label) for label in read("./text_classifier/data/label.txt")]
-        self.wordsId, self.idf_table = tokenize(train_data, mode)
-        trainX = tfidf_matrix(train_data, self.wordsId, self.idf_table, mode)
-        self.cls = train_classifier(trainX, train_y, 0.1)
+            self.train_data = read("./text_classifier/data/datafile.txt")
+            self.train_y = [int(label) for label in read("./text_classifier/data/label.txt")]
+        self.wordsId, self.idf_table = tokenize(self.train_data, mode)
+        trainX = tfidf_matrix(self.train_data, self.wordsId, self.idf_table, mode)
+        self.cls = train_classifier(trainX, self.train_y, 0.1)
 
     def classify(self, review):
         test_vector = tfidf_matrix([review], self.wordsId, self.idf_table, self.mode)[0]
@@ -173,27 +174,86 @@ class TC:
         r = re.split(r'\W+', lower)
         uni = []
         bi = []
+
         for i in range(len(r)):
             w = r[i]
             uni.append(w)
             if i != len(r) - 1 and self.mode == 0:
                 b = r[i] + ' ' + r[i + 1]
                 bi.append(b)
-        """
-        print("========unigram=======")
-        for w in uni:
+
+        class Data: pass
+        information = Data()
+        information.sentence = ''.join([w for w in r])
+        information.label = self.cls.predict(test_vector)[0]
+        information.confidence = "{:.2%}".format(self.cls.predict_proba(test_vector)[0].max())
+
+        #unigram weights
+        weight_uni = []
+        important_uni = []
+        for w in set(uni):
             if w in self.wordsId:
-                print(w, round(self.cls.coef_[0][self.wordsId[w]],2))
+                weight = self.cls.coef_[0][self.wordsId[w]]
+                weight_uni.append((weight, w))
+                if abs(weight) > 0.13:
+                    important_uni.append(w)
             else:
-                print(w, "is unseen")
-        print("========bigram========")
-        for w in bi:
-            if w in self.wordsId:
-                print(w, round(self.cls.coef_[0][self.wordsId[w]],2))
-            else:
-                print(w, "is unseen")
-        print("confidence score:", self.cls.decision_function(test_vector)[0])
-        """
-        label = self.cls.predict(test_vector)[0]
-        confidence = round(self.cls.predict_proba(test_vector)[0].max(), 2)
-        return (label, confidence)
+                weight_uni.append((0, w))
+        weight_uni.sort()
+        weight_uni.reverse()
+        words = [w[1] for w in weight_uni]
+        weights = np.array([w[0] for w in weight_uni])
+        #draw and save chart
+        positive = np.maximum(weights, 0)
+        negative = np.minimum(weights, 0)
+        fig, ax = plt.subplots()
+        plt.xlabel('Terms')
+        plt.ylabel('Weights')
+        plt.title('unigram weights chart')
+        ax.bar(words, negative, 0.35, color="g")
+        ax.bar(words, positive, 0.35, color="r", bottom=negative)
+        ax.axhline(y=0,linewidth=1, color='k')
+        fig.autofmt_xdate()
+        fig.savefig('./text_classifier/static/text_classifier/weight_uni.png')
+        information.important_uni = important_uni
+
+        #example sentence
+        example = []
+        for word in important_uni:
+            for i in range(len(self.train_data)):
+                if word in self.train_data[i] and information.label == self.train_y[i]:
+                    example.append(self.train_data[i])
+                    break
+        information.example = example
+
+        #bigram weights
+        if self.mode == 0:
+            weight_bi = []
+            important_bi = []
+            for w in set(bi):
+                if w in self.wordsId:
+                    weight = self.cls.coef_[0][self.wordsId[w]]
+                    weight_bi.append((weight, w))
+                    if abs(weight) > 0.05:
+                        important_bi.append(w)
+                else:
+                    weight_bi.append((0, w))
+            weight_bi.sort()
+            weight_bi.reverse()
+            words = [w[1] for w in weight_bi]
+            weights = np.array([w[0] for w in weight_bi])
+            #draw and save chart
+            positive = np.maximum(weights, 0)
+            negative = np.minimum(weights, 0)
+            fig, ax = plt.subplots()
+            plt.xlabel('Terms')
+            plt.ylabel('Weights')
+            plt.title('bigram weights chart')
+            ax.bar(words, negative, 0.35, color="g")
+            ax.bar(words, positive, 0.35, color="r", bottom=negative)
+            ax.axhline(y=0,linewidth=1, color='k')
+            fig.autofmt_xdate()
+            fig.savefig('./text_classifier/static/text_classifier/weight_bi.png')
+            information.important_bi = important_bi
+
+        return information
