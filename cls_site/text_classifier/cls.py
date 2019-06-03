@@ -167,8 +167,14 @@ class TC:
         self.wordsId, self.idf_table = tokenize(self.train_data, mode)
         trainX = tfidf_matrix(self.train_data, self.wordsId, self.idf_table, mode)
         self.cls = train_classifier(trainX, self.train_y, 0.1)
+        self.confidence = [a.max() for a in self.cls.predict_proba(trainX)]
+
 
     def classify(self, review):
+        if self.mode == 0:
+            threshold = 0.25
+        else:
+            threshold = 0.4
         test_vector = tfidf_matrix([review], self.wordsId, self.idf_table, self.mode)[0]
         lower = ''.join([c for c in review.lower()])
         r = re.split(r'\W+', lower)
@@ -181,29 +187,60 @@ class TC:
             if i != len(r) - 1 and self.mode == 0:
                 b = r[i] + ' ' + r[i + 1]
                 bi.append(b)
+        prob = self.cls.predict_proba(test_vector)[0].max()
 
         class Data: pass
         information = Data()
-        information.sentence = ''.join([w for w in r])
+        information.origin = review
+        information.sentence = r
         information.label = self.cls.predict(test_vector)[0]
-        information.confidence = "{:.2%}".format(self.cls.predict_proba(test_vector)[0].max())
+        information.confidence = "{:.2%}".format(prob)
 
-        #unigram weights
+        #unigram graph
+        coef_uni = []
+        importance_uni = []
         weight_uni = []
         important_uni = []
         for w in set(uni):
             if w in self.wordsId:
-                weight = self.cls.coef_[0][self.wordsId[w]]
-                weight_uni.append((weight, w))
-                if abs(weight) > 0.13:
+                coef = self.cls.coef_[0][self.wordsId[w]]
+                coef_uni.append(coef)
+                importance = self.idf_table[w] * uni.count(w)
+                importance_uni.append(importance)
+                weight = coef * importance
+                weight_uni.append(weight)
+                if abs(weight) > threshold:
                     important_uni.append(w)
             else:
-                weight_uni.append((0, w))
-        weight_uni.sort()
-        weight_uni.reverse()
-        words = [w[1] for w in weight_uni]
-        weights = np.array([w[0] for w in weight_uni])
-        #draw and save chart
+                coef_uni.append(0)
+                importance_uni.append(0)
+                weight_uni.append(0)
+
+        words = list(set(uni))
+        #uni coef graph
+        coefs = np.array(coef_uni)
+        positive = np.maximum(coefs, 0)
+        negative = np.minimum(coefs, 0)
+        fig, ax = plt.subplots()
+        plt.xlabel('Terms')
+        plt.ylabel('Sentiments')
+        plt.title('unigram sentiments chart')
+        ax.bar(words, negative, 0.35, color="g")
+        ax.bar(words, positive, 0.35, color="r", bottom=negative)
+        ax.axhline(y=0, linewidth=1, color='k')
+        fig.autofmt_xdate()
+        fig.savefig('./text_classifier/static/text_classifier/sentiment_uni.png')
+        plt.clf()
+        #uni importance graph
+        plt.xlabel('Terms')
+        plt.ylabel('tfidf')
+        plt.title('unigram tfidf chart')
+        plt.bar(words, importance_uni, 0.35, color="b")
+        fig.autofmt_xdate()
+        plt.savefig('./text_classifier/static/text_classifier/tfidf_uni.png')
+        plt.clf()
+        #uni weight graph
+        weights = np.array(weight_uni)
         positive = np.maximum(weights, 0)
         negative = np.minimum(weights, 0)
         fig, ax = plt.subplots()
@@ -212,37 +249,75 @@ class TC:
         plt.title('unigram weights chart')
         ax.bar(words, negative, 0.35, color="g")
         ax.bar(words, positive, 0.35, color="r", bottom=negative)
-        ax.axhline(y=0,linewidth=1, color='k')
+        ax.axhline(y=0, linewidth=1, color='k')
+        ax.axhline(y=threshold, linewidth=1, linestyle='--', color='k')
+        ax.axhline(y=-threshold, linewidth=1, linestyle='--', color='k')
         fig.autofmt_xdate()
         fig.savefig('./text_classifier/static/text_classifier/weight_uni.png')
+        plt.clf()
+
         information.important_uni = important_uni
 
         #example sentence
-        example = []
+        example = {}
         for word in important_uni:
+            label = 0
+            if self.cls.coef_[0][self.wordsId[word]] > 0:
+                label = 1
             for i in range(len(self.train_data)):
-                if word in self.train_data[i] and information.label == self.train_y[i]:
-                    example.append(self.train_data[i])
+                lower = ''.join([c for c in self.train_data[i].lower()])
+                r = re.split(r'\W+', lower)
+                if word in r and label == self.train_y[i]:
+                    example[word] = self.train_data[i]
                     break
         information.example = example
 
-        #bigram weights
+        #bigram coefs
         if self.mode == 0:
+            coef_bi = []
+            importance_bi = []
             weight_bi = []
             important_bi = []
             for w in set(bi):
                 if w in self.wordsId:
-                    weight = self.cls.coef_[0][self.wordsId[w]]
-                    weight_bi.append((weight, w))
-                    if abs(weight) > 0.05:
+                    coef = self.cls.coef_[0][self.wordsId[w]]
+                    coef_bi.append(coef)
+                    importance = self.idf_table[w] * bi.count(w)
+                    importance_bi.append(importance)
+                    weight = coef * importance
+                    weight_bi.append(weight)
+                    if abs(weight) > threshold:
                         important_bi.append(w)
                 else:
-                    weight_bi.append((0, w))
-            weight_bi.sort()
-            weight_bi.reverse()
-            words = [w[1] for w in weight_bi]
-            weights = np.array([w[0] for w in weight_bi])
+                    coef_bi.append(0)
+                    importance_bi.append(0)
+                    weight_bi.append(0)
+            words = list(set(bi))
+            #bigram coef graph
+            coefs = np.array(coef_bi)
             #draw and save chart
+            positive = np.maximum(coefs, 0)
+            negative = np.minimum(coefs, 0)
+            fig, ax = plt.subplots()
+            plt.xlabel('Terms')
+            plt.ylabel('Sentiments')
+            plt.title('bigram sentiments chart')
+            ax.bar(words, negative, 0.35, color="g")
+            ax.bar(words, positive, 0.35, color="r", bottom=negative)
+            ax.axhline(y=0,linewidth=1, color='k')
+            fig.autofmt_xdate()
+            fig.savefig('./text_classifier/static/text_classifier/sentiment_bi.png')
+            fig.clf()
+            #bi importance graph
+            plt.xlabel('Terms')
+            plt.ylabel('tfidf')
+            plt.title('bigram tfidf chart')
+            plt.bar(words, importance_bi, 0.35, color="b")
+            fig.autofmt_xdate()
+            plt.savefig('./text_classifier/static/text_classifier/tfidf_bi.png')
+            plt.clf()
+            #bi weight graph
+            weights = np.array(weight_bi)
             positive = np.maximum(weights, 0)
             negative = np.minimum(weights, 0)
             fig, ax = plt.subplots()
@@ -251,9 +326,13 @@ class TC:
             plt.title('bigram weights chart')
             ax.bar(words, negative, 0.35, color="g")
             ax.bar(words, positive, 0.35, color="r", bottom=negative)
-            ax.axhline(y=0,linewidth=1, color='k')
+            ax.axhline(y=0, linewidth=1, color='k')
+            ax.axhline(y=threshold, linewidth=1, linestyle='--', color='k')
+            ax.axhline(y=-threshold, linewidth=1, linestyle='--', color='k')
             fig.autofmt_xdate()
             fig.savefig('./text_classifier/static/text_classifier/weight_bi.png')
+            plt.clf()
+            #important word
             information.important_bi = important_bi
 
         return information

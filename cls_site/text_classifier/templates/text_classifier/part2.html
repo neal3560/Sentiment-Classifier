@@ -13,23 +13,82 @@
 		<!--https://fonts.googleapis.com/css?family=Roboto:300,400,700-->
 		<link href="{% static "text_classifier/googleapis.css" %}"  rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" type="text/css" href="{% static "text_classifier/main.css" %}"  >
+		<script>
+			function giveExample(word, dict){
+				console.log(word)
+				document.getElementById("example").textContent = dict[word]
+			}
+		</script>
 	</head>
 
 	<body class="part2" >
+
+		{% if action == 'input' %}
 		<!-- Jumbotron -->
-		<section class="jumbotron" >
+		<div class="jumbotron" >
 			<div class="container">
 				<div class="text-center">
-					<h1>Toxicity Classifier</h1>
-              <br>
-                <form action="/text_classifier/part2" method="post">
-                    {% csrf_token %}
-                    {{ form }}
-                    <input type="submit" value="Submit">
-                </form>
+					<h1 style="margin-bottom:20px; color: rgba(240, 80, 80, 0.65); font-style: italic">Toxicity Classifier</h1>
+                    <form action="/text_classifier/part2" method="post">
+                        {% csrf_token %}
+                         {{ form }}
+                        <input type="submit" value="Submit">
+                    </form>
 				</div>
 			</div>
-		</section>
+		</div>
 
+		{% else %}
+		<div class="horizontal" id="board">
+			<div class="vertical" style="width:25%">
+				<br>
+				{% if info.label == 1 %}
+					<p style="color:#fff; font-size:24px;">Label predicted: Toxic ☠</p>
+				{% else %}
+					<p style="color:#fff; font-size:24px;">Label predicted:  None-toxic 💩</p>
+				{% endif %}
+				<p style="color:#fff; font-size:24px;">Prediction confidence: {{info.confidence}}</p>
+
+				<h2 style="color:#fff; font-size:16px;">Original test sentence:</h2>
+				<h2 style="color:#fff; font-size:16px; font-style:italic;">&#160   {{info.origin}}</h2>
+
+
+				<h2 style="color:#fff; font-size:16px;">Processed test sentence:&#160</h2>
+
+
+				<div class="horizontal">
+					<h2 style="color:#fff; font-size:16px;">&#160</h2>
+					{% for word in info.sentence %}
+						{% if word in info.important_uni %}
+							<mark class="important_uni" onclick='giveExample("{{word}}", {{info.example}})'>{{word}}</mark>
+						{% else %}
+							<mark class="normal">{{word}}</mark>
+						{% endif %}
+					{% endfor %}
+				</div>
+
+				<p class="color" style="font-size:16px;">Word Example:</p>
+				<div class="horizontal">
+					<p class="color" style="font-size:16px;">&#160</p>
+					<p class="color" id="example"
+						style="font-size:16px; font-style:italic">
+						Choose a colored word in the processed sentence to see the word's example.
+					</p>
+				</div>
+
+
+				<a href="{% url 'part2'  %}"  class="color" style="margin-top:8px"><u>BACK</u></a>
+				<a href="{% url 'classifier'  %}" class="color" style="margin-top:8px; margin-bottom:16px"><u>BACK TO MAIN</u></a>
+			</div>
+
+		<div class="vertical" style="margin-top:16px">
+			<div class="horizontal">
+				<img class="chart" src="{% static "text_classifier/tfidf_uni.png" %}">
+				<img class="chart" src="{% static "text_classifier/sentiment_uni.png" %}">
+				<img class="chart" src="{% static "text_classifier/weight_uni.png" %}">
+			</div>
+		</div>
+	</div>
+		{% endif %}
 	</body>
 </html>

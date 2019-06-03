@@ -6,33 +6,28 @@
 .jumbotron {
 	display: flex;
 	align-items: center;
-	/*background-size: cover;*/
+	background-color: rgba(0,0,0,0);
+	background-size: cover;
 	height: 725px;
-
 }
-.main .jumbotron{
+
+.main {
 	background-image:url("./forest.gif");
   background-position: center;
   background-repeat: no-repeat;
 	background-size: cover;
 }
-.part1 .jumbotron{
+.part1 {
 	background-image:url("./back.gif");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
-.part1 .jumbotron h1{
-	margin-bottom: 50px;
-}
-.part2 .jumbotron{
+.part2 {
 	background-image:url("./cat.gif");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-}
-.part2 .jumbotron h1{
-	margin-bottom: 50px;
 }
 /* ------------- jumb text ------------ */
 .text-center h1 {
@@ -73,10 +68,9 @@ input[type=submit] {
   cursor: pointer;
 }
 
-
  /* ------ option ------- */
 #option .row{
-	display: flew;
+	display: flex;
 	align-items: center;
 	margin-top: 80px;
 }
@@ -89,17 +83,60 @@ input[type=submit] {
 }
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-
+.color{
+	color: white;
+}
 /* ------------ Result ----------------- */
-#result1{
-	background-image:url("./light.gif");
-	height: 725px;
+.vertical{
+	padding-left: 20px;
+	border-radius: 20px;
+	display: flex;
+	align-items: flex-start;
+	flex-direction: column;
+}
+
+#board{
+	background-color: rgba(0,1,0,0.5);
 	background-position: center;
   background-repeat: no-repeat;
 	background-size: cover;
+	border-radius: 20px;
+}
+
+.horizontal{
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+}
+
+.chart{
+	height: 270px;
+	weight: 480px;
+	margin: 8px;
+	border-radius: 10px;
 }
 
 #analysis{
 	margin-top: 20px;
 	width: 400px;
+}
+/*---mark---*/
+.important_uni{
+	background-color: yellow;
+	font-size: 16px;
+	font-style:italic;
+	color: blue;
+	cursor: pointer;
+}
+
+.normal{
+	background-color: rgba(0,0,0,0);
+	font-size: 16px;
+	font-style:italic;
+	color: white;
+}
+
+#example{
+	font-size: 20px;
+	color: white;
 }
