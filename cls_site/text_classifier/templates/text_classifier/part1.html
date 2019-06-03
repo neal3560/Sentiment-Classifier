@@ -15,25 +15,43 @@
 		<link rel="stylesheet" type="text/css" href="{% static "text_classifier/main.css" %}"  >
 	</head>
 
-	<body class="part1">
+	<body class="part1" >
 
-
+		{% if action == 'input' %}
 		<!-- Jumbotron -->
-		<section class="jumbotron" >
+		<div class="jumbotron" >
 			<div class="container">
 				<div class="text-center">
 					<h1>Sentiment Classifier</h1>
-                    <br>
                     <form action="/text_classifier/part1" method="post">
                         {% csrf_token %}
                          {{ form }}
                         <input type="submit" value="Submit">
                     </form>
-
 				</div>
-
 			</div>
-		</section>
+		</div>
+
+		{% else %}
+		<div id="result1">
+			<div class="container">
+				<br>
+				<h2 style="color:#fff; font-size:40px;">Your Input Sentence: </h2>
+				<h2 style="color:#fff; font-size:40px; margin-left: 30px;"> hahahaha </h2>
+				<div class="row">
+					<div class="col-sm-6">
+						<img src="{% static "text_classifier/wave.jpg" %}" alt="analysis" id="analysis">
+						<h2>something </h2>
+					</div>
+					<div class="col-sm-6 text-center">
+						<h2>another thing</h2>
+					</div>
+				</div>
+			</div>
+			<a href="{% url 'part1'  %}">BACK</a>
+			<a href="{% url 'classifier'  %}">BACK TO MAIN</a>
+		</div>
+		{% endif %}
 
 	</body>
 </html>

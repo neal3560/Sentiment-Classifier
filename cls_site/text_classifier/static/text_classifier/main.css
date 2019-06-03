@@ -2,38 +2,39 @@
  * Chunan Huang
  */
 
-
 /* ----------------- Jumbotron ------------------- */
 .jumbotron {
 	display: flex;
 	align-items: center;
-	background-size: cover;
-	background-color: rgba(0, 0, 0, 0);
+	/*background-size: cover;*/
 	height: 725px;
 
 }
-.main{
+.main .jumbotron{
 	background-image:url("./forest.gif");
-	height: 100%;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+	background-size: cover;
 }
-.part1{
+.part1 .jumbotron{
 	background-image:url("./back.gif");
-	height: 100%;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
-.part2{
+.part1 .jumbotron h1{
+	margin-bottom: 50px;
+}
+.part2 .jumbotron{
 	background-image:url("./cat.gif");
-	height: 100%;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
-
+.part2 .jumbotron h1{
+	margin-bottom: 50px;
+}
+/* ------------- jumb text ------------ */
 .text-center h1 {
 	font-size: 80px;
 	font-weight: 500;
@@ -47,20 +48,19 @@
 	font-style: italic;
 	font-family: 'Arial', sans-serif;
 }
-
-label{
-	color: #fff;
-}
+/* ----------- input form ---------- */
 
 input[type=text]{
-  width: 300px;
-	height:30px;
-  padding: 8px;
+  width: 500px;
+	height:50px;
+  padding: 20px;
 	margin: 8px;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 24px;
   box-sizing: border-box;
-  resize: vertical;
+	resize: vertical;
+	color:#666;
+	font-size: 17px;
 }
 
 input[type=submit] {
@@ -89,3 +89,17 @@ input[type=submit] {
 }
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+
+/* ------------ Result ----------------- */
+#result1{
+	background-image:url("./light.gif");
+	height: 725px;
+	background-position: center;
+  background-repeat: no-repeat;
+	background-size: cover;
+}
+
+#analysis{
+	margin-top: 20px;
+	width: 400px;
+}

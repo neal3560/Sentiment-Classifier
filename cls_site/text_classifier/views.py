@@ -6,7 +6,8 @@ from django import forms
 from .cls import TC
 
 class SentenceForm(forms.Form):
-    test_sentence = forms.CharField(label='Test sentence', max_length=100)
+    input = 'Input Sentence'
+    test_sentence = forms.CharField(label='', max_length=100,widget=forms.TextInput(attrs={'placeholder': input,}))
 
 tc_sentiment = TC(0)
 
@@ -25,9 +26,9 @@ def part1(request):
         sample = form.data['test_sentence']
         score = tc_sentiment.classify(sample)
         if form.is_valid():
-            return render(request, 'text_classifier/part1.html', {'sentence':form.data,'form':form, 'score': score})
-    return render(request, 'text_classifier/part1.html', {'form':form})
+            return render(request, 'text_classifier/part1.html', {'sentence':form.data,'form':form, 'score': score, 'action':'result'})
+    return render(request, 'text_classifier/part1.html', {'form':form, 'action':'input'})
 
 def part2(request):
     form = SentenceForm()
-    return render(request, 'text_classifier/part2.html', {'form':form})
+    return render(request, 'text_classifier/part2.html', {'form':form,'action':'input'})
