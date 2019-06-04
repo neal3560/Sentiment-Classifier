@@ -45,7 +45,7 @@
 				{% if info.label == 1 %}
 					<p style="color:#fff; font-size:24px;">Label predicted: Toxic ☠</p>
 				{% else %}
-					<p style="color:#fff; font-size:24px;">Label predicted:  None-toxic 💩</p>
+					<p style="color:#fff; font-size:24px;">Label predicted:  Non-toxic 💩</p>
 				{% endif %}
 				<p style="color:#fff; font-size:24px;">Prediction confidence: {{info.confidence}}</p>
 
@@ -56,16 +56,19 @@
 				<h2 style="color:#fff; font-size:16px;">Processed test sentence:&#160</h2>
 
 
-				<div class="horizontal">
-					<h2 style="color:#fff; font-size:16px;">&#160</h2>
-					{% for word in info.sentence %}
-						{% if word in info.important_uni %}
-							<mark class="important_uni" onclick='giveExample("{{word}}", {{info.example}})'>{{word}}</mark>
-						{% else %}
-							<mark class="normal">{{word}}</mark>
-						{% endif %}
+				<div id="process">
+					<br>
+					{% for section in info.sentence %}
+						{% for word in section %}
+							{% if word in info.important_uni %}
+								<mark class="important_uni" onclick='giveExample("{{word}}", {{info.example}})'>{{word}}</mark>
+							{% else %}
+								<mark class="normal">{{word}}</mark>
+							{% endif %}
+						{% endfor%}
 					{% endfor %}
 				</div>
+				<br><br>
 
 				<p class="color" style="font-size:16px;">Word Example:</p>
 				<div class="horizontal">
@@ -83,11 +86,59 @@
 
 		<div class="vertical" style="margin-top:16px">
 			<div class="horizontal">
-				<img class="chart" src="{% static "text_classifier/tfidf_uni.png" %}">
-				<img class="chart" src="{% static "text_classifier/sentiment_uni.png" %}">
-				<img class="chart" src="{% static "text_classifier/weight_uni.png" %}">
+				<img class="chart" id="c1" src="{% static "text_classifier/tfidf_uni.png" %}">
+				<img class="chart" id="c2" src="{% static "text_classifier/sentiment_uni.png" %}">
+				<img class="chart" id="c3" src="{% static "text_classifier/weight_uni.png" %}">
 			</div>
 		</div>
+
+		<!-- The Modal -->
+		<div id="myModal" class="modal">
+			<!-- The Close Button -->
+			<span class="close">&times;</span>
+
+			<!-- Modal Content (The Image) -->
+			<img class="modal-content" id="img01">
+
+			<!-- Modal Caption (Image Text) -->
+			<div id="caption"></div>
+		</div>
+
+		<script>
+			// Get the modal
+			var modal = document.getElementById("myModal");
+
+			// Get the image and insert it inside the modal - use its "alt" text as a caption
+			var img1 = document.getElementById("c1");
+			var img2 = document.getElementById("c2");
+			var img3 = document.getElementById("c3");
+			var modalImg = document.getElementById("img01");
+			var captionText = document.getElementById("caption");
+			img1.onclick = function(){
+				modal.style.display = "block";
+				modalImg.src = this.src;
+				captionText.innerHTML = this.alt;
+			}
+			img2.onclick = function(){
+				modal.style.display = "block";
+				modalImg.src = this.src;
+				captionText.innerHTML = this.alt;
+			}
+			img3.onclick = function(){
+				modal.style.display = "block";
+				modalImg.src = this.src;
+				captionText.innerHTML = this.alt;
+			}
+
+			// Get the <span> element that closes the modal
+			var span = document.getElementsByClassName("close")[0];
+
+			// When the user clicks on <span> (x), close the modal
+			span.onclick = function() {
+			modal.style.display = "none";
+			}
+		</script>
+
 	</div>
 		{% endif %}
 	</body>

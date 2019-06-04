@@ -198,6 +198,8 @@ class TC:
         curLen = 0
         for index in range(len(r)):
             word = r[index]
+            if index == len(r) - 1 and len(word) == 0:
+                continue
             section.append(word)
             curLen += len(word)
             if curLen > 20:
